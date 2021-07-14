@@ -1,3 +1,11 @@
+name: ios App Build
+on:
+  push:
+    branches:
+      - main
+
+#name: Build and Release Apps
+
 jobs:
   build:
     name: Build Apps
