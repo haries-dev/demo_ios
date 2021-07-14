@@ -1,47 +1,26 @@
 name: ios App Build
-on:
-  push:
-    branches:
-      - main
+name: "swift-create-xcframework"
+description: "Creates XCFramework bundles for the products in your Swift Package and uploads them as Artifacts you can attach to a release"
 
-#name: Build and Release Apps
+inputs:
+  target:
+    description: "The name of the target(s) you want to create an XCFramework bundle for. One artifact will be uploaded for each target. Separate target names with commas."
+    required: false
+  platforms:
+    description: "The platform(s) that you want to build for. Default is to build for all platforms supported in your Package.swift, or all Apple platforms if omited. Comma-delimited string supported."
+    required: false
+  configuration:
+    description: "Build with a specific configuration ('debug' or 'release')"
+    required: false
+    default: release
+  xcconfig:
+    description: "The path to a .xcconfig file that can be used to override Xcode build settings. Relative to the package path."
+    required: false
 
-jobs:
-  build:
-    name: Build Apps
-    runs-on: macos-latest
-    steps:
-      - name: Export Release Timestamp
-        run: echo "APP_VERSION=release_$(date +'%Y-%m-%d_%H-%m-%S')" >> $GITHUB_ENV
-      - name: Checkout repository
-        uses: actions/checkout@v1
-      - name: Set up Java
-        uses: actions/setup-java@v1
-        with:
-          java-version: "12.x"
-      - name: Set up Flutter
-        uses: subosito/flutter-action@v1
-        with:
-          channel: "stable"
-      #- name: Install pub Dependencies
-        #run: flutter pub get
-      #- name: Run Tests
-       # run: flutter test
-      #- name: Build Android App
-       # run: flutter build apk --split-per-abi
-      - name: Build iOS App
-        run: |
-          flutter build ios --no-codesign
-          cd build/ios/iphoneos
-          mkdir Payload
-          cd Payload
-          ln -s ../Runner.app
-          cd ..
-          zip -r app.ipa Payload
-      - name: Release Apps
-        uses: ncipollo/release-action@v1
-        with:
-          tag: ${{ env.APP_VERSION }}
-          name: ${{ env.APP_VERSION }}
-          token: ${{ secrets.GITHUB_TOKEN }}
-          artifacts: "build/app/outputs/apk/release/*.apk,build/ios/iphoneos/app.ipa"
+runs:
+  using: node12
+  main: action.js
+
+branding:
+  icon: "package"
+  color: "green"
