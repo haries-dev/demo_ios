@@ -2,7 +2,7 @@ name: ios App Build
 on:
   push:
     branches:
-      - master
+      - main
 
 name: Build and Release Apps
 jobs:
